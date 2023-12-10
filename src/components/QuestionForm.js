@@ -20,6 +20,23 @@ function QuestionForm(props) {
   function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
+    // create question skeleton
+    const questionData = {
+      prompt: event.target.prompt.value,
+      answers: [event.target.answer1.value, event.target.answer2.value, event.target.answer3.value, event.target.answer4.value],
+      correctIndex: Number(event.target.correctIndex.value),
+    };
+
+    // post data to server
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(questionData),
+    })
+      .then((r) => r.json())
+      .then(newQuestion => console.log(newQuestion));
   }
 
   return (
