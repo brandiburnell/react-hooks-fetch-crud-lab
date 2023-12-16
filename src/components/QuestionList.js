@@ -13,8 +13,41 @@ function QuestionList() {
   }, []);
 
   const questionItems = questions.map((question) => {
-    return <QuestionItem question={question} key={question.id} />
+    return <QuestionItem question={question} key={question.id} onDeleteQuestion={handleDelete} onAnswerChange={handleAnswerChange}/>
   });
+
+  function handleDelete(id) {
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "DELETE",
+    })
+      .then((r) => r.json())
+      .then(() => {
+        const updatedQuestions = questions.filter((question) => question.id !== id);
+        setQuestions(updatedQuestions);
+      });
+  }
+
+  function handleAnswerChange(id, index) {
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({index}),
+    })
+      .then((r) => r.json())
+      .then((updatedQuestion) => {
+        const updatedQuestions = questions.map((q) => {
+          if (q.id === updatedQuestion.id) {
+            return updatedQuestion;
+          }
+          else {
+            return q;
+          }
+        });
+        setQuestions(updatedQuestions);
+      });
+  }
 
   return (
     <section>
